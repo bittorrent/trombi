@@ -624,13 +624,15 @@ class Database(TrombiObject):
 
         couchdb_params = kw
         couchdb_params['feed'] = feed
-        if timeout is not None:
-            # CouchDB takes timeouts in milliseconds
-            couchdb_params['timeout'] = timeout * 1000
-        url = '_changes?%s' % urlencode(couchdb_params)
         params = dict()
         if feed == 'continuous':
             params['streaming_callback'] = _stream
+        if timeout is not None:
+            # CouchDB takes timeouts in milliseconds
+            couchdb_params['timeout'] = timeout * 1000
+            # Make sure that requests don't timeout 
+            params['request_timeout'] = timeout + 1
+        url = '_changes?%s' % urlencode(couchdb_params)
 
         log.debug('Fetching changes from %s with params %s', url, params)
         self._fetch(url, _really_callback, **params)
