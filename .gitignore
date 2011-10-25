@@ -3,3 +3,4 @@ tmp
 /MANIFEST
 /build
 /dist
+*.egg-info
